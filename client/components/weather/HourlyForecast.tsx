@@ -1,4 +1,4 @@
-import { WeatherData, getWeatherDescription } from "@/lib/weather";
+import { WeatherData, getWeatherDescription, isDaytime } from "@/lib/weather";
 import { useEffect, useState } from "react";
 
 interface HourlyForecastProps {
