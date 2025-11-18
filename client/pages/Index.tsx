@@ -8,7 +8,8 @@ import { CurrentWeatherSkeleton } from "@/components/weather/CurrentWeatherSkele
 import { HourlyForecastSkeleton } from "@/components/weather/HourlyForecastSkeleton";
 import { DailyForecastSkeleton } from "@/components/weather/DailyForecastSkeleton";
 import { Button } from "@/components/ui/button";
-import { MapPin } from "lucide-react";
+import { MapPin, Moon, Sun } from "lucide-react";
+import { useTheme } from "@/hooks/use-theme";
 
 interface LocationCache {
   lat: number;
