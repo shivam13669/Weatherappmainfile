@@ -104,8 +104,6 @@ function formatTime(timeString: string): string {
 }
 
 export function CurrentWeather({ data, cityName }: CurrentWeatherProps) {
-  const [tempUnit, setTempUnit] = useState<"C" | "F">("C");
-
   const weather = getWeatherDescription(
     data.current.weatherCode,
     data.current.isDay,
@@ -138,10 +136,6 @@ export function CurrentWeather({ data, cityName }: CurrentWeatherProps) {
   const tempF = celsiusToFahrenheit(tempC);
   const feelsLikeC = data.current.apparentTemperature;
   const feelsLikeF = celsiusToFahrenheit(feelsLikeC);
-
-  const displayTemp = tempUnit === "C" ? tempC : tempF;
-  const displayFeelsLike = tempUnit === "C" ? feelsLikeC : feelsLikeF;
-  const tempSymbol = tempUnit === "C" ? "°C" : "°F";
 
   const aqiLabel = getAQILabel(data.current.aqi);
   const aqiColor = getAQIColor(data.current.aqi);
