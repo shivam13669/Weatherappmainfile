@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { WeatherData, getWeatherDescription } from "@/lib/weather";
 import {
   Cloud,
@@ -7,7 +8,11 @@ import {
   Wind,
   Sun,
   AlertCircle,
+  Sunrise,
+  Sunset,
+  Clock,
 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 interface CurrentWeatherProps {
   data: WeatherData;
@@ -36,12 +41,79 @@ function getAQIColor(aqi: number): string {
   return "text-red-900";
 }
 
+function getUVRecommendation(
+  uvIndex: number,
+): {
+  level: string;
+  recommendation: string;
+  color: string;
+} {
+  if (uvIndex < 3) {
+    return {
+      level: "Low",
+      recommendation: "Minimal sun protection needed",
+      color: "text-green-600",
+    };
+  }
+  if (uvIndex < 6) {
+    return {
+      level: "Moderate",
+      recommendation: "Wear sunscreen & hat",
+      color: "text-yellow-600",
+    };
+  }
+  if (uvIndex < 8) {
+    return {
+      level: "High",
+      recommendation: "Use SPF 30+ sunscreen",
+      color: "text-orange-600",
+    };
+  }
+  if (uvIndex < 11) {
+    return {
+      level: "Very High",
+      recommendation: "Extra protection needed",
+      color: "text-red-600",
+    };
+  }
+  return {
+    level: "Extreme",
+    recommendation: "Avoid sun exposure",
+    color: "text-red-900",
+  };
+}
+
+function getWindDirectionArrow(degrees: number): string {
+  const normalizedDegrees = ((degrees % 360) + 360) % 360;
+
+  if (normalizedDegrees < 22.5 || normalizedDegrees >= 337.5) return "↓";
+  if (normalizedDegrees < 67.5) return "↙";
+  if (normalizedDegrees < 112.5) return "←";
+  if (normalizedDegrees < 157.5) return "↖";
+  if (normalizedDegrees < 202.5) return "↑";
+  if (normalizedDegrees < 247.5) return "↗";
+  if (normalizedDegrees < 292.5) return "→";
+  return "↘";
+}
+
+function formatTime(timeString: string): string {
+  if (!timeString) return "--:--";
+  const time = new Date(timeString);
+  return time.toLocaleTimeString("en-US", {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}
+
 export function CurrentWeather({ data, cityName }: CurrentWeatherProps) {
+  const [tempUnit, setTempUnit] = useState<"C" | "F">("C");
+
   const weather = getWeatherDescription(
     data.current.weatherCode,
     data.current.isDay,
   );
   const windDirection = data.current.windDirection.toFixed(0);
+
   const getWindDirection = (degrees: number) => {
     const directions = [
       "N",
@@ -64,37 +136,93 @@ export function CurrentWeather({ data, cityName }: CurrentWeatherProps) {
     return directions[Math.round(degrees / 22.5) % 16];
   };
 
-  const tempF = celsiusToFahrenheit(data.current.temperature);
-  const feelsLikeF = celsiusToFahrenheit(data.current.apparentTemperature);
+  const tempC = data.current.temperature;
+  const tempF = celsiusToFahrenheit(tempC);
+  const feelsLikeC = data.current.apparentTemperature;
+  const feelsLikeF = celsiusToFahrenheit(feelsLikeC);
+
+  const displayTemp = tempUnit === "C" ? tempC : tempF;
+  const displayFeelsLike = tempUnit === "C" ? feelsLikeC : feelsLikeF;
+  const tempSymbol = tempUnit === "C" ? "°C" : "°F";
+
   const aqiLabel = getAQILabel(data.current.aqi);
   const aqiColor = getAQIColor(data.current.aqi);
+
+  const uvInfo = getUVRecommendation(data.current.uvIndex);
+  const windArrow = getWindDirectionArrow(parseFloat(windDirection));
+  const windDir = getWindDirection(parseFloat(windDirection));
+
+  const lastUpdated = new Date();
+  const lastUpdatedStr = lastUpdated.toLocaleTimeString("en-US", {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
 
   return (
     <div className="w-full">
       {/* Main Current Conditions */}
       <div className="bg-gradient-to-br from-primary/10 to-secondary/10 border border-primary/20 rounded-2xl p-8 mb-6">
-        <div className="flex items-center justify-between gap-4">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div className="flex-1">
-            <h1 className="text-4xl font-bold text-foreground mb-2">
-              {cityName}
-            </h1>
+            <div className="flex items-center justify-between gap-2 mb-4">
+              <h1 className="text-4xl font-bold text-foreground">{cityName}</h1>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setTempUnit(tempUnit === "C" ? "F" : "C")}
+                className="whitespace-nowrap"
+              >
+                °{tempUnit === "C" ? "F" : "C"}
+              </Button>
+            </div>
+
             <p className="text-2xl font-semibold text-primary mb-1">
-              {data.current.temperature.toFixed(0)}°C / {tempF.toFixed(0)}°F
+              {displayTemp.toFixed(0)}{tempSymbol}
             </p>
             <p className="text-lg text-muted-foreground mb-4">
               {weather.description}
             </p>
             <div className="space-y-2">
               <p className="text-sm text-muted-foreground">
-                Feels like {data.current.apparentTemperature.toFixed(0)}°C /{" "}
-                {feelsLikeF.toFixed(0)}°F
+                Feels like {displayFeelsLike.toFixed(0)}{tempSymbol}
               </p>
               <p className="text-sm text-muted-foreground">
                 AQI: {data.current.aqi.toFixed(0)} ({aqiLabel})
               </p>
+              <p className="text-xs text-muted-foreground flex items-center gap-1">
+                <Clock className="h-3 w-3" />
+                Updated: {lastUpdatedStr}
+              </p>
             </div>
           </div>
           <div className="text-7xl">{weather.icon}</div>
+        </div>
+      </div>
+
+      {/* Sunrise/Sunset */}
+      <div className="grid grid-cols-2 gap-4 mb-6">
+        <div className="bg-gradient-to-br from-orange-400/10 to-orange-500/10 border border-orange-200 dark:border-orange-900 rounded-xl p-4">
+          <div className="flex items-center gap-2 mb-2">
+            <Sunrise className="h-5 w-5 text-orange-600" />
+            <p className="text-xs font-semibold text-muted-foreground uppercase">
+              Sunrise
+            </p>
+          </div>
+          <p className="text-2xl font-bold text-foreground">
+            {formatTime(data.current.sunrise)}
+          </p>
+        </div>
+
+        <div className="bg-gradient-to-br from-indigo-400/10 to-indigo-500/10 border border-indigo-200 dark:border-indigo-900 rounded-xl p-4">
+          <div className="flex items-center gap-2 mb-2">
+            <Sunset className="h-5 w-5 text-indigo-600" />
+            <p className="text-xs font-semibold text-muted-foreground uppercase">
+              Sunset
+            </p>
+          </div>
+          <p className="text-2xl font-bold text-foreground">
+            {formatTime(data.current.sunset)}
+          </p>
         </div>
       </div>
 
@@ -122,9 +250,12 @@ export function CurrentWeather({ data, cityName }: CurrentWeatherProps) {
           <p className="text-2xl font-bold text-foreground">
             {data.current.windSpeed.toFixed(1)} m/s
           </p>
-          <p className="text-xs text-muted-foreground mt-1">
-            From {getWindDirection(parseFloat(windDirection))}
-          </p>
+          <div className="flex items-center justify-between mt-2 text-xs text-muted-foreground">
+            <span>{windDir}</span>
+            <span className="text-lg" style={{ transform: `rotate(${data.current.windDirection}deg)` }}>
+              {windArrow}
+            </span>
+          </div>
         </div>
 
         <div className="bg-card border border-border rounded-xl p-4">
@@ -161,16 +292,11 @@ export function CurrentWeather({ data, cityName }: CurrentWeatherProps) {
           <p className="text-2xl font-bold text-foreground">
             {data.current.uvIndex.toFixed(1)}
           </p>
+          <p className={`text-xs font-semibold mt-1 ${uvInfo.color}`}>
+            {uvInfo.level}
+          </p>
           <p className="text-xs text-muted-foreground mt-1">
-            {data.current.uvIndex < 3
-              ? "Low"
-              : data.current.uvIndex < 6
-                ? "Moderate"
-                : data.current.uvIndex < 8
-                  ? "High"
-                  : data.current.uvIndex < 11
-                    ? "Very High"
-                    : "Extreme"}
+            {uvInfo.recommendation}
           </p>
         </div>
 
