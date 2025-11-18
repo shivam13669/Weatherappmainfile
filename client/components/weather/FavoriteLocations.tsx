@@ -38,9 +38,16 @@ export function FavoriteLocations({
       addedAt: Date.now(),
     };
 
-    const updated = [newFavorite, ...favorites.filter(
-      (f) => !(f.latitude === location.latitude && f.longitude === location.longitude),
-    )];
+    const updated = [
+      newFavorite,
+      ...favorites.filter(
+        (f) =>
+          !(
+            f.latitude === location.latitude &&
+            f.longitude === location.longitude
+          ),
+      ),
+    ];
 
     setFavorites(updated);
     localStorage.setItem("favoriteLocations", JSON.stringify(updated));
@@ -48,7 +55,10 @@ export function FavoriteLocations({
 
   const removeFavorite = (location: LocationData) => {
     const updated = favorites.filter(
-      (f) => !(f.latitude === location.latitude && f.longitude === location.longitude),
+      (f) =>
+        !(
+          f.latitude === location.latitude && f.longitude === location.longitude
+        ),
     );
     setFavorites(updated);
     localStorage.setItem("favoriteLocations", JSON.stringify(updated));
@@ -56,12 +66,13 @@ export function FavoriteLocations({
 
   const isFavorite = (location: LocationData | string): boolean => {
     if (typeof location === "string") {
-      return favorites.some((f) => 
-        `${f.name}${f.admin1 ? ", " + f.admin1 : ""}` === location
+      return favorites.some(
+        (f) => `${f.name}${f.admin1 ? ", " + f.admin1 : ""}` === location,
       );
     }
     return favorites.some(
-      (f) => f.latitude === location.latitude && f.longitude === location.longitude,
+      (f) =>
+        f.latitude === location.latitude && f.longitude === location.longitude,
     );
   };
 
@@ -140,19 +151,21 @@ export function useFavorites() {
 
   const toggleFavorite = (location: LocationData) => {
     const isFav = favorites.some(
-      (f) => f.latitude === location.latitude && f.longitude === location.longitude,
+      (f) =>
+        f.latitude === location.latitude && f.longitude === location.longitude,
     );
 
     let updated: FavoriteLocation[];
     if (isFav) {
       updated = favorites.filter(
-        (f) => !(f.latitude === location.latitude && f.longitude === location.longitude),
+        (f) =>
+          !(
+            f.latitude === location.latitude &&
+            f.longitude === location.longitude
+          ),
       );
     } else {
-      updated = [
-        { ...location, addedAt: Date.now() },
-        ...favorites,
-      ];
+      updated = [{ ...location, addedAt: Date.now() }, ...favorites];
     }
 
     setFavorites(updated);
@@ -161,7 +174,8 @@ export function useFavorites() {
 
   const isFavorite = (location: LocationData): boolean => {
     return favorites.some(
-      (f) => f.latitude === location.latitude && f.longitude === location.longitude,
+      (f) =>
+        f.latitude === location.latitude && f.longitude === location.longitude,
     );
   };
 

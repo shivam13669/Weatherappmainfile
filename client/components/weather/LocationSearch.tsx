@@ -197,7 +197,11 @@ export function LocationSearch({
                       <Heart
                         className="h-4 w-4"
                         fill={isFavorite(location) ? "currentColor" : "none"}
-                        color={isFavorite(location) ? "rgb(239, 68, 68)" : "currentColor"}
+                        color={
+                          isFavorite(location)
+                            ? "rgb(239, 68, 68)"
+                            : "currentColor"
+                        }
                       />
                     </button>
                   </div>

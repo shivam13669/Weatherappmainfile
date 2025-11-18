@@ -39,9 +39,7 @@ function getAQIColor(aqi: number): string {
   return "text-red-900";
 }
 
-function getUVRecommendation(
-  uvIndex: number,
-): {
+function getUVRecommendation(uvIndex: number): {
   level: string;
   recommendation: string;
   color: string;
@@ -156,7 +154,9 @@ export function CurrentWeather({ data, cityName }: CurrentWeatherProps) {
       <div className="bg-gradient-to-br from-primary/10 to-secondary/10 border border-primary/20 rounded-2xl p-8 mb-6">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div className="flex-1">
-            <h1 className="text-4xl font-bold text-foreground mb-4">{cityName}</h1>
+            <h1 className="text-4xl font-bold text-foreground mb-4">
+              {cityName}
+            </h1>
 
             <p className="text-2xl font-semibold text-primary mb-1">
               {tempC.toFixed(0)}°C / {tempF.toFixed(0)}°F
@@ -236,7 +236,10 @@ export function CurrentWeather({ data, cityName }: CurrentWeatherProps) {
             <span className="font-semibold">{windDir}</span>
             <div
               className="text-xl font-bold"
-              style={{ transform: `rotate(${data.current.windDirection}deg)`, display: "inline-block" }}
+              style={{
+                transform: `rotate(${data.current.windDirection}deg)`,
+                display: "inline-block",
+              }}
             >
               ↓
             </div>

@@ -14,7 +14,9 @@ export function useTheme() {
       applyTheme(saved);
     } else {
       // Check system preference
-      const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+      const prefersDark = window.matchMedia(
+        "(prefers-color-scheme: dark)",
+      ).matches;
       const initialTheme = prefersDark ? "dark" : "light";
       setTheme(initialTheme);
       applyTheme(initialTheme);

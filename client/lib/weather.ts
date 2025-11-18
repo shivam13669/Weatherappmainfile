@@ -141,10 +141,8 @@ export async function searchLocations(query: string): Promise<LocationData[]> {
 
     // Sort results by relevance: exact matches first, then by population
     const results = data.results.sort((a: LocationData, b: LocationData) => {
-      const aExact =
-        a.name.toLowerCase() === query.toLowerCase() ? 0 : 1;
-      const bExact =
-        b.name.toLowerCase() === query.toLowerCase() ? 0 : 1;
+      const aExact = a.name.toLowerCase() === query.toLowerCase() ? 0 : 1;
+      const bExact = b.name.toLowerCase() === query.toLowerCase() ? 0 : 1;
 
       if (aExact !== bExact) return aExact - bExact;
 
