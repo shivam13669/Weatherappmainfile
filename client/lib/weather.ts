@@ -214,6 +214,8 @@ export async function getWeatherData(
         temperature2mMin: weatherData.daily.temperature_2m_min,
         precipitation: weatherData.daily.precipitation_sum,
         windSpeed10mMax: weatherData.daily.wind_speed_10m_max,
+        sunrise: weatherData.daily.sunrise,
+        sunset: weatherData.daily.sunset,
       },
       timezone: weatherData.timezone,
       latitude: weatherData.latitude,
