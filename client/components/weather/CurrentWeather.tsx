@@ -250,11 +250,14 @@ export function CurrentWeather({ data, cityName }: CurrentWeatherProps) {
           <p className="text-2xl font-bold text-foreground">
             {data.current.windSpeed.toFixed(1)} m/s
           </p>
-          <div className="flex items-center justify-between mt-2 text-xs text-muted-foreground">
-            <span>{windDir}</span>
-            <span className="text-lg" style={{ transform: `rotate(${data.current.windDirection}deg)` }}>
-              {windArrow}
-            </span>
+          <div className="flex items-center justify-between mt-2 text-xs text-muted-foreground gap-2">
+            <span className="font-semibold">{windDir}</span>
+            <div
+              className="text-xl font-bold"
+              style={{ transform: `rotate(${data.current.windDirection}deg)`, display: "inline-block" }}
+            >
+              ↓
+            </div>
           </div>
         </div>
 
