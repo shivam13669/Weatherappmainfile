@@ -26,6 +26,7 @@ export default function Index() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [locationDenied, setLocationDenied] = useState(false);
+  const { theme, toggleTheme, mounted } = useTheme();
 
   const NEW_DELHI_LAT = 28.6139;
   const NEW_DELHI_LNG = 77.209;
