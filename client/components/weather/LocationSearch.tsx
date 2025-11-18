@@ -19,6 +19,8 @@ export function LocationSearch({
   const [suggestions, setSuggestions] = useState<LocationData[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const [showFavorites, setShowFavorites] = useState(false);
+  const { favorites, toggleFavorite, isFavorite } = useFavorites();
 
   const handleSearch = useCallback(async (value: string) => {
     setQuery(value);
